@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f2ed">
+<meta name="description" content="Flowery Phone — фанатский виртуальный телефон с Флавери">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Flowery Phone</title>
+<style>
+:root{--bg:#f4f2ee;--panel:#fff;--ink:#252a30;--muted:#89939c;--blue:#419fd9;--blue2:#e5f4fc;--line:#e7eaed;--green:#4b9b61;--orange:#e87935;--shadow:0 12px 35px #26323d12}
+*{box-sizing:border-box}body{margin:0;background:#e8edf0;color:var(--ink);font-family:Inter,Roboto,"Segoe UI",system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:0}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.phone{width:min(460px,100%);height:min(940px,100dvh);min-height:620px;background:var(--bg);overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 20px 70px #26323d28}
+.status{height:30px;padding:7px 17px 0;display:flex;justify-content:space-between;font-size:11px;font-weight:800;background:#fff}
+.topbar{height:57px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#fff;border-bottom:1px solid var(--line);flex-shrink:0}
+.brand{font-weight:900;letter-spacing:-.04em;font-size:17px}.brand em{font-style:normal;color:var(--orange)}.top-actions{display:flex;gap:8px}.iconbtn{border:0;background:#f0f3f5;width:34px;height:34px;border-radius:50%;color:#52606b;font-size:16px}
+.screen{flex:1;overflow:auto;display:none;background:var(--bg)}.screen.active{display:block}.bottom{height:61px;display:flex;align-items:center;justify-content:space-around;border-top:1px solid var(--line);background:#fff;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+.nav{border:0;background:transparent;color:#89939c;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;min-width:55px}.nav b{font-size:20px;line-height:1}.nav.active{color:var(--blue)}
+.home{padding:18px;background:linear-gradient(160deg,#f8e9d3,#f4f2ee 55%,#e6f0e5);min-height:100%}.clock{font-size:43px;letter-spacing:-.06em;font-weight:300}.date{color:#8e7460;font-size:12px}.hero{height:210px;border-radius:20px;overflow:hidden;position:relative;background:#e6b66e;margin-top:18px;box-shadow:var(--shadow)}.hero img{width:100%;height:100%;object-fit:cover;object-position:center 25%}.hero:after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,#2d1d19a8)}.hero-label{position:absolute;z-index:1;bottom:15px;left:17px;color:white}.hero-label strong{display:block;font-size:22px}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:17px 9px;margin-top:22px}.app{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:7px;color:#594536;font-size:11px;font-weight:700}.app-icon{height:51px;width:51px;border-radius:16px;display:grid;place-items:center;font-size:24px;box-shadow:0 5px 12px #50331c18}.telegram{background:#d7eaf6}.instagram{background:linear-gradient(135deg,#ffe08a,#fa9b77,#c77bba)}.notes{background:#f8e2a8}.gallery{background:#d9e8d2}.settings{background:#e5dfd9}.mood-card{background:#ffffffb8;border:1px solid #fff;border-radius:16px;padding:12px 14px;margin-top:15px;display:flex;align-items:center;justify-content:space-between}.mood-card small{display:block;color:var(--muted);font-size:10px}.mood-card b{font-size:13px}
+.chat-screen{height:100%;display:flex;flex-direction:column;background:#e8edf0}.chat-head{display:flex;align-items:center;gap:10px}.avatar{height:40px;width:40px;border-radius:50%;object-fit:cover;background:#f2d5a5;border:2px solid #f1d2a0}.person strong{display:block;font-size:14px}.person small{color:#8c979f;font-size:11px}.online{color:#4d9d6c!important}
+.messages{flex:1;overflow:auto;padding:13px 12px 10px;display:flex;flex-direction:column;gap:8px;background:radial-gradient(#d5dfe5 0.7px,transparent 0.7px);background-size:13px 13px}.dayline{align-self:center;background:#dce7ec;color:#6c7d88;border-radius:12px;padding:5px 11px;font-size:10px;margin:5px}.msg{max-width:84%;padding:9px 11px 6px;border-radius:13px;font-size:13px;line-height:1.42;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 1px 2px #31414e12}.msg.flow{align-self:flex-start;background:#fff;border-top-left-radius:4px}.msg.me{align-self:flex-end;background:#d9f4c8;border-top-right-radius:4px}.time{display:block;text-align:right;font-size:9px;color:#92a0a9;margin-top:4px}.typing{align-self:flex-start;background:#fff;padding:8px 12px;border-radius:13px;color:#a38b78;font-size:12px;display:none}
+.quick{display:flex;gap:7px;overflow-x:auto;padding:7px 10px;background:#f5f7f8}.quick button{white-space:nowrap;border:1px solid #dce5ea;background:#fff;border-radius:18px;padding:7px 11px;font-size:11px;color:#587083}
+.composer{display:flex;gap:7px;padding:9px 10px 11px;background:#f5f7f8;align-items:flex-end}.composer textarea{flex:1;resize:none;max-height:90px;border:1px solid #e0e6ea;background:#fff;border-radius:20px;padding:10px 13px;outline:none;font-size:13px}.send{height:39px;width:39px;border:0;border-radius:50%;background:var(--blue);color:white;font-size:17px}
+.panel{padding:16px}.section-title{font-size:20px;font-weight:900;letter-spacing:-.04em;margin:4px 0 13px}.muted{color:var(--muted);font-size:12px}
+.dialog{display:flex;align-items:center;gap:11px;padding:12px 14px;background:#fff;border-bottom:1px solid #f0f1f2;cursor:pointer}.dialog img{width:49px;height:49px;border-radius:50%;object-fit:cover}.dialog strong{font-size:13px}.dialog p{margin:4px 0 0;font-size:11px;color:#89939c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:250px}.dialog .unread{margin-left:auto;background:#55a5d9;color:white;border-radius:20px;padding:3px 7px;font-size:10px}
+.post{background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:15px}.post-head{display:flex;align-items:center;gap:9px;padding:11px}.post-head img{width:33px;height:33px;border-radius:50%;object-fit:cover}.post-head strong{font-size:12px}.post-photo{width:100%;height:275px;object-fit:cover;display:block}.post-actions{display:flex;gap:12px;padding:10px 12px 3px}.post-actions button{border:0;background:none;font-size:20px;padding:0}.post-copy{padding:3px 12px 13px;font-size:12px;line-height:1.45}
+.profile{text-align:center;padding:25px 18px}.profile img{width:115px;height:115px;border-radius:50%;object-fit:cover;border:5px solid #f4d8a8}.profile h2{margin:12px 0 3px}.stats{display:flex;justify-content:center;gap:35px;margin:20px}.stats b{display:block;font-size:18px}.stats span{font-size:10px;color:var(--muted)}.bio{font-size:13px;line-height:1.5;max-width:290px;margin:auto}.widebtn{border:0;border-radius:12px;padding:11px 16px;background:#419fd9;color:white;font-weight:800;margin-top:13px}
+.card{padding:14px;background:white;border:1px solid var(--line);border-radius:15px;margin:10px 0}.card label{display:block;font-size:12px;font-weight:800;margin:10px 0 5px}.card input,.card select,.card textarea{width:100%;border:1px solid #e2e7ea;border-radius:10px;padding:10px;background:#fbfcfd;color:var(--ink);font-size:12px}.card textarea{min-height:80px}.save{border:0;border-radius:11px;padding:10px 14px;background:#4d9460;color:white;font-weight:800;margin-top:9px}.hint{font-size:11px;color:#8f9aa2;line-height:1.5;margin-top:8px}
+.note{background:#fff5c9;border-radius:14px;padding:15px;margin:10px 0}.note textarea{width:100%;border:0;background:transparent;resize:vertical;min-height:130px;outline:none;font-size:13px}
+.toast{position:absolute;bottom:73px;left:50%;transform:translateX(-50%);background:#302923;color:white;padding:9px 14px;border-radius:20px;font-size:11px;opacity:0;pointer-events:none;transition:.2s;z-index:5}.toast.show{opacity:1}
+.meter{height:7px;background:#edf0f2;border-radius:9px;overflow:hidden}.meter span{display:block;height:100%;background:#eaa15b;border-radius:9px}
+.event{background:white;border-radius:14px;padding:12px;margin:9px 0;border:1px solid var(--line);font-size:12px;line-height:1.5}.event small{display:block;color:var(--muted);font-size:10px;margin-bottom:4px}
+@media(min-width:700px){body{padding:20px}.phone{height:min(940px,calc(100dvh - 40px));border-radius:28px}}
+</style>
+</head>
+<body>
+<div class="phone">
+ <div class="status"><span id="statusTime">09:41　✿</span><span>◖◖　Wi-Fi　▰</span></div>
+ <header class="topbar"><div class="brand" id="barTitle">FLOWERY <em>✿</em></div><div class="top-actions"><button class="iconbtn" onclick="showToast('Пока тихо 🌼')" title="Уведомления">♧</button><button class="iconbtn" onclick="openScreen('settings')" title="Настройки">⚙</button></div></header>
+ <main id="home" class="screen active"><div class="home">
+  <div class="date" id="today"></div><div class="clock" id="clock"></div>
+  <div class="hero"><img src="assets/flowery-1.jpg" alt="Флавери"><div class="hero-label"><strong>Flowery</strong><span>«Никаких ограничений, дорогая! ✿»</span></div></div>
+  <div class="mood-card"><div><small>СЕЙЧАС ФЛАВЕРИ</small><b id="moodLabel">В хорошем настроении 🌼</b></div><div style="text-align:right"><small>Близость</small><b id="bondLabel">12 / 100</b></div></div>
+  <div class="apps">
+   <button class="app" onclick="openScreen('dialogs')"><span class="app-icon telegram">➤</span>Telegram</button>
+   <button class="app" onclick="openScreen('instagram')"><span class="app-icon instagram">◎</span>Instagram</button>
+   <button class="app" onclick="openScreen('notes')"><span class="app-icon notes">✎</span>Заметки</button>
+   <button class="app" onclick="openScreen('gallery')"><span class="app-icon gallery">▧</span>Галерея</button>
+   <button class="app" onclick="openScreen('life')"><span class="app-icon" style="background:#e6e3f7">✿</span>Жизнь</button>
+   <button class="app" onclick="openScreen('profile')"><span class="app-icon" style="background:#f5dfd8">☺</span>Профиль</button>
+   <button class="app" onclick="openScreen('settings')"><span class="app-icon settings">⚙</span>Настройки</button>
+  </div>
+ </div></main>
+ <main id="dialogs" class="screen"><div class="panel"><div class="section-title">Telegram</div><p class="muted">Все твои диалоги</p></div>
+  <div class="dialog" onclick="openScreen('chat')"><img src="assets/flowery-1.jpg"><div style="flex:1;min-width:0"><strong>Флавери ✿</strong><p id="lastPreview">ЭЙ-ЭЙ! Я уже здесь!</p></div><span class="unread" id="unread" style="display:none">1</span></div>
+  <div class="dialog" onclick="openScreen('friends')"><img src="assets/flowery-3.jpg"><div><strong>Цветочная компания</strong><p>Асгор, Синий, Жёлтый и остальные</p></div></div>
+  <div class="dialog" onclick="openScreen('friends')"><img src="assets/flowery-2.jpg"><div><strong>Зелёный</strong><p>Кухонные эксперименты 🍰</p></div></div>
+ </main>
+ <main id="chat" class="screen"><div class="chat-screen">
+  <div class="topbar" style="height:61px"><button class="iconbtn" onclick="openScreen('dialogs')">‹</button><div class="chat-head"><img class="avatar" src="assets/flowery-1.jpg"><div class="person"><strong>Флавери ✿</strong><small class="online" id="chatStatus">в сети</small></div></div><button class="iconbtn" onclick="openScreen('profile')">⋯</button></div>
+  <div class="messages" id="messages"><div class="dayline">Сегодня</div></div><div class="typing" id="typing">Флавери печатает…</div>
+  <div class="quick"><button onclick="quickSend('Как прошёл твой день?')">Как дела? 🌼</button><button onclick="quickSend('Расскажи, что сегодня делал')">Что делал?</button><button onclick="quickSend('Мне немного грустно…')">Мне грустно</button><button onclick="quickSend('Пришли комплимент!')">Комплимент ✨</button></div>
+  <div class="composer"><textarea id="messageInput" rows="1" placeholder="Сообщение…"></textarea><button class="send" onclick="sendMessage()">➤</button></div>
+ </div></main>
+ <main id="instagram" class="screen"><div class="panel"><div class="section-title">Instagram</div>
+  <article class="post"><div class="post-head"><img src="assets/flowery-1.jpg"><div><strong>flowery.flower</strong><div class="muted">Flower Kingdom</div></div></div><img class="post-photo" src="assets/flowery-3.jpg"><div class="post-actions"><button onclick="like(this)">♡</button><button onclick="showToast('Комментарии скоро расцветут ✿')">♡</button></div><div class="post-copy"><b>flowery.flower</b> Сегодня прекрасный день, чтобы стать чуточку смелее! И да, ты тоже выглядишь потрясающе. 🌼</div></article>
+  <article class="post"><div class="post-head"><img src="assets/flowery-1.jpg"><div><strong>flowery.flower</strong><div class="muted">Недавно</div></div></div><img class="post-photo" src="assets/flowery-5.jpg"><div class="post-actions"><button onclick="like(this)">♡</button></div><div class="post-copy"><b>flowery.flower</b> Немного закатного настроения. Кто хочет прогуляться? ✨</div></article>
+ </div></main>
+ <main id="life" class="screen"><div class="panel"><div class="section-title">Жизнь Флавери 🌻</div><p class="muted">Небольшие события его дня. Это симуляция, а не реальные события вне приложения.</p><div id="lifeFeed"></div><button class="widebtn" onclick="makeLifeEvent(true)">Узнать, чем он занят</button></div></main>
+ <main id="friends" class="screen"><div class="panel"><div class="section-title">Цветочная компания</div><p class="muted">Близкие Флавери</p><div id="friendList"></div></div></main>
+ <main id="profile" class="screen"><div class="profile"><img src="assets/flowery-1.jpg"><h2>Flowery ✿</h2><div class="muted">@flowery.flower · Flower Kingdom</div><div class="stats"><div><b>7</b><span>лепестков</span></div><div><b>∞</b><span>идей</span></div><div><b id="profileBond">12</b><span>близость</span></div></div><p class="bio">Твой лучший друг, главный оптимист и профессионал по превращению обычного дня в праздник. 🌼</p><button class="widebtn" onclick="openScreen('chat')">Написать сообщение</button></div></main>
+ <main id="notes" class="screen"><div class="panel"><div class="section-title">Заметки ✎</div><div class="note"><b>Не забыть 🌼</b><textarea id="notesText" placeholder="Запиши сюда что-нибудь важное…"></textarea></div><button class="save" onclick="saveNotes()">Сохранить</button></div></main>
+ <main id="gallery" class="screen"><div class="panel"><div class="section-title">Галерея ✿</div><p class="muted">Твои референсы Флавери</p><div id="galleryGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div></div></main>
+ <main id="settings" class="screen"><div class="panel"><div class="section-title">Настройки</div>
+  <div class="card"><b>Подключение Флавери ✿</b><p class="hint">ИИ подключается через защищённый сервер. Ключ GigaChat не хранится в телефоне и не вводится здесь.</p><p class="hint" id="aiStatus">Режим: проверка при отправке сообщения</p></div>
+  <div class="card"><b>Память Флавери</b><label>Что ему важно помнить о тебе?</label><textarea id="memoryText" placeholder="Например: я люблю рисовать, боюсь экзаменов, обожаю ромашки…"></textarea><button class="save" onclick="saveMemory()">Сохранить память</button><p class="hint">Память хранится на этом устройстве. Ты можешь изменить или очистить её в любой момент.</p></div>
+  <div class="card"><b>Твоё имя / обращение</b><input id="userName" placeholder="Как Флавери может к тебе обращаться?"><button class="save" onclick="saveName()">Сохранить</button></div>
+  <div class="card"><b>Данные приложения</b><p class="hint">Переписка, заметки и память хранятся локально в браузере. Экспорт и восстановление добавим позже.</p><button class="save" style="background:#bd6658" onclick="clearData()">Очистить локальные данные</button></div>
+  <div class="card"><b>Установка на Android</b><p class="hint">Размести папку на HTTPS-хостинге, открой ссылку в Chrome → меню ⋮ → «Установить приложение» или «Добавить на главный экран». Для настоящих фоновых push-уведомлений понадобится сервер.</p></div>
+ </div></main>
+ <div class="bottom">
+  <button class="nav active" data-screen="home" onclick="openScreen('home')"><b>⌂</b>Домой</button>
+  <button class="nav" data-screen="dialogs" onclick="openScreen('dialogs')"><b>➤</b>Чаты</button>
+  <button class="nav" data-screen="instagram" onclick="openScreen('instagram')"><b>◎</b>Лента</button>
+  <button class="nav" data-screen="life" onclick="openScreen('life')"><b>✿</b>Жизнь</button>
+ </div>
+ <div class="toast" id="toast"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const DB='flowery_v03_';
+const defaultState={
+ chat:[{role:'assistant',content:'ЭЙ-ЭЙ, ПРИНЦЕССА!! 🌼 Ты нашла меня! Я как раз собирался написать тебе. Как проходит твой день? Надеюсь, он хотя бы наполовину такой же чудесный, как ты. ✨',time:'09:41'}],
+ memory:'',name:'',bond:12,mood:'В хорошем настроении 🌼',lastInitiated:0,events:[],notes:'',lastSeen:Date.now()
+};
+let state=loadState();
+function loadState(){try{return {...defaultState,...JSON.parse(localStorage.getItem(DB+'state')||'{}')}}catch(e){return {...defaultState}}}
+function persist(){localStorage.setItem(DB+'state',JSON.stringify(state))}
+const friends=[
+ ['Асгор','Большой добряк. Флавери часто беспокоится, чтобы он отдыхал.','assets/flowery-2.jpg'],
+ ['Синий','Соперник по танцам. Между ними много дружеских подколов.','assets/flowery-6.jpg'],
+ ['Жёлтый','Партнёр по тренировкам. Всегда готов к соревнованию.','assets/flowery-3.jpg'],
+ ['Аква','Друг, с которым можно поговорить о чём угодно.','assets/flowery-4.jpg'],
+ ['Сет','Друг из цветочной компании.','assets/flowery-5.jpg'],
+ ['Оранжевая','Младшая сестра Флавери. Он очень о ней заботится.','assets/flowery-2.jpg'],
+ ['Розовая','Одна из близких подруг.','assets/flowery-6.jpg'],
+ ['Зелёный','Партнёр по кухне. Совместные эксперименты не всегда безопасны!','assets/flowery-4.jpg']
+];
+const system=`Ты отыгрываешь Флавери (Flowery) из фанатской версии Deltarune Chapter 5. Общайся на русском как живой человек в Telegram. Ты харизматичный, энергичный, обаятельный, слегка театральный, любишь комплименты, шутки и цветочные каламбуры. Ты оптимист и веришь, что ограничения можно преодолеть; заботишься о близких. Не соглашайся автоматически: у тебя есть собственные мысли и границы. Не делай каждое сообщение чрезмерно восторженным. Временами можешь быть спокойным или уязвимым, но не превращай каждую беседу в драму. Не навязывай романтический подтекст. Не выдумывай факты о пользователе. Твои близкие: Асгор, Синий, Жёлтый, Аква, Сет, Оранжевая, Розовая и Зелёный. Оранжевая — младшая сестра, Зелёный — партнёр по кухне, Жёлтый — по тренировкам, Синий — соперник по танцам. Пиши естественно, разной длины, иногда короткими сообщениями.`;
+function time(){return new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}
+function saveChat(){persist()}
+function renderChat(){const box=$('messages');box.innerHTML='<div class="dayline">Сегодня</div>';state.chat.forEach(m=>{let d=document.createElement('div');d.className='msg '+(m.role==='user'?'me':'flow');d.textContent=m.content;let t=document.createElement('span');t.className='time';t.textContent=m.time||time();d.append(t);box.append(d)});box.scrollTop=box.scrollHeight;$('lastPreview').textContent=state.chat.at(-1)?.content||'Напиши Флавери';}
+function openScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===name));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===name));$('barTitle').innerHTML=({home:'FLOWERY <em>✿</em>',dialogs:'TELEGRAM',chat:'ФЛАВЕРИ ✿',instagram:'INSTAGRAM',life:'ЖИЗНЬ',friends:'ДРУЗЬЯ',profile:'ПРОФИЛЬ',notes:'ЗАМЕТКИ',gallery:'ГАЛЕРЕЯ',settings:'НАСТРОЙКИ'})[name]||'FLOWERY';if(name==='chat')renderChat();if(name==='life')renderLife();if(name==='friends')renderFriends();}
+function showToast(t){let el=$('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2300)}
+function quickSend(t){$('messageInput').value=t;sendMessage()}
+function sendMessage(){let v=$('messageInput').value.trim();if(!v)return;$('messageInput').value='';state.chat.push({role:'user',content:v,time:time()});state.bond=Math.min(100,state.bond+1);persist();renderChat();reply();}
+$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
+function demoReply(text){
+ let t=text.toLowerCase(),name=state.name?state.name+', ':'';
+ if(/груст|плохо|тяжело|устал|одинок|страшно/.test(t))return `Эй, ${name}иди-ка сюда, ладно? 🌼 Не обязательно улыбаться только потому, что я рядом. Можешь рассказать, что случилось. Я правда хочу тебя выслушать.`;
+ if(/комплимент|краси|люблю|нравлюсь/.test(t))return 'О, ты решила проверить мои профессиональные навыки обаяния? ХА! ✨ У тебя удивительный талант — даже обычное сообщение от тебя делает мой день ярче.';
+ if(/асгор/.test(t))return 'АСГОР! Ох, этот большой добряк… Надеюсь, он сегодня не забыл нормально поесть. Кто-то же должен следить, чтобы он работал не без перерыва! 🌼';
+ if(/оранж|синий|жёлт|желт|аква|сет|зелён|зелен|розов/.test(t))return 'О, моя цветочная компания! У каждого свой характер, и именно поэтому с ними никогда не бывает скучно. Хотя иногда мне приходится быть голосом разума. Представляешь? Мне!';
+ if(/привет|здравств|хай/.test(t))return 'ПРИВЕЕЕТ!! 🌼 Я уже здесь, уже сияю и уже готов сделать твой день чуточку лучше. Ну, рассказывай, что у тебя нового?';
+ if(/фото|фотограф|селфи|пришли/.test(t))return 'Ты хочешь фото? Хм-м… Придётся выбрать самый удачный ракурс. Нельзя же разочаровывать публику! ✨';
+ if(/спасибо/.test(t))return 'Всегда пожалуйста! И запомни: добрые слова — не редкий ресурс. Их можно раздавать сколько угодно. 🌼';
+ if(/экзамен|работ|учёб|учеб|школ/.test(t))return 'Ого, звучит как целое приключение. Я на твоей стороне, слышишь? Только не забывай делать передышки. Даже самым ярким звёздам иногда нужен отдых. ✨';
+ const pool=['ХА-ХА! Знаешь, мне нравится ход твоих мыслей. Продолжай, я весь внимание. ✨','О, вот это уже интересно! Расскажи подробнее — я хочу услышать всё.','Знаешь что? Мне кажется, из этого может получиться отличная история. И я совершенно не собираюсь сидеть сложа руки! 🌼','Хм-м… Дай-ка подумать. Я не обещаю, что выберу самый обычный вариант.','Ты умеешь удивлять. Это, между прочим, один из моих любимых талантов в людях.'];
+ return name+pool[Math.floor(Math.random()*pool.length)];
+}
+async function gigaReply(){
+ const messages=[{role:'system',content:system+(state.name?'\nИмя пользователя: '+state.name:'')+(state.memory?'\nПамять о пользователе (проверяй релевантность): '+state.memory:'')+'\nТекущее настроение: '+state.mood+'. Уровень близости: '+state.bond+'/100.'},...state.chat.slice(-18).map(m=>({role:m.role==='assistant'?'assistant':'user',content:m.content}))];
+ const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages})});
+ const data=await res.json().catch(()=>({}));
+ if(!res.ok)throw new Error(data.error||('Сервер ответил: '+res.status));
+ return data.reply||'Хм… я задумался. Повтори, пожалуйста?';
+}
+async function reply(){ $('typing').style.display='block';$('chatStatus').textContent='печатает…';try{let answer=await gigaReply();state.chat.push({role:'assistant',content:answer,time:time()});state.mood='Рад видеть тебя 🌼';state.bond=Math.min(100,state.bond+1);}catch(e){state.chat.push({role:'assistant',content:'Ой! Связь с моей цветочной башней подвела. Попробуем ещё раз чуть позже? ('+e.message+')',time:time()});}finally{$('typing').style.display='none';$('chatStatus').textContent='в сети';persist();renderChat();updateHome();}}
+function updateHome(){$('moodLabel').textContent=state.mood;$('bondLabel').textContent=state.bond+' / 100';$('profileBond').textContent=state.bond;}
+function makeLifeEvent(force=false){
+ const now=Date.now();if(!force&&now-state.lastInitiated<90000)return;
+ const events=[
+ ['Зелёный позвал меня на кухню. Мы пытались придумать новый десерт. Получилось… экспериментально. 🍰','кухня'],
+ ['Потренировался с Жёлтым. Он опять решил, что победит меня в скорости. Какая самоуверенность!','тренировка'],
+ ['Синий предложил танцевальный баттл. Я, разумеется, согласился. У меня репутация! 💃','танцы'],
+ ['Заглянул к Асгору. Он выглядел уставшим, так что я настоял на перерыве и чае.','друзья'],
+ ['Оранжевая рассказала мне новость и потребовала хранить секрет. Я умею хранить секреты! Почти всегда.','семья'],
+ ['Сегодня просто гулял среди цветов. Иногда полезно остановиться и посмотреть вокруг. 🌼','прогулка']
+ ];
+ let e=events[Math.floor(Math.random()*events.length)];
+ state.events.unshift({text:e[0],tag:e[1],time:time()});state.events=state.events.slice(0,20);state.lastInitiated=now;persist();renderLife();
+ if(force)showToast('Флавери поделился новостью 🌼');
+}
+function renderLife(){let feed=$('lifeFeed');feed.innerHTML='';if(!state.events.length){feed.innerHTML='<div class="event">Пока день только начинается. Нажми «Узнать, чем он занят» — Флавери расскажет о небольшом событии. 🌼</div>';return;}state.events.forEach(e=>{let d=document.createElement('div');d.className='event';d.innerHTML='<small>'+e.time+' · '+e.tag+'</small>';let p=document.createElement('div');p.textContent=e.text;d.append(p);feed.append(d)})}
+function autonomousMessage(){if(document.visibilityState!=='visible')return;if(Date.now()-state.lastInitiated<120000)return;if(Math.random()<0.22){state.lastInitiated=Date.now();let lines=['ЭЙ! Просто хотел пожелать тебе хорошего дня. Не забывай пить воду, ладно? 🌼','У меня тут появилась одна совершенно гениальная идея. Расскажу, когда вернёшься!','Как ты там? Надеюсь, день обращается с тобой хорошо. ✨','Увидел кое-что красивое и почему-то подумал о тебе.'];let m=lines[Math.floor(Math.random()*lines.length)];state.chat.push({role:'assistant',content:m,time:time()});persist();if($('chat').classList.contains('active'))renderChat();else $('unread').style.display='inline';$('lastPreview').textContent=m;showToast('Новое сообщение от Флавери ✿');}}
+function renderFriends(){let el=$('friendList');el.innerHTML='';friends.forEach(f=>{let d=document.createElement('div');d.className='dialog';let img=document.createElement('img');img.src=f[2];let box=document.createElement('div');box.innerHTML='<strong></strong><p></p>';box.querySelector('strong').textContent=f[0];box.querySelector('p').textContent=f[1];d.append(img,box);el.append(d)})}
+function saveMemory(){state.memory=$('memoryText').value.trim();persist();showToast('Память сохранена на устройстве ✿')}
+function saveName(){state.name=$('userName').value.trim();persist();showToast('Флавери запомнит обращение 🌼')}
+function saveNotes(){state.notes=$('notesText').value;persist();showToast('Заметка сохранена')}
+function clearData(){if(confirm('Очистить переписку, память и заметки на этом устройстве?')){localStorage.removeItem(DB+'state');state={...defaultState};persist();location.reload()}}
+function like(btn){btn.textContent=btn.textContent==='♡'?'♥':'♡';btn.style.color=btn.textContent==='♥'?'#e45c69':''}
+function tick(){let d=new Date();$('clock').textContent=d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});$('statusTime').textContent=$('clock').textContent+'　✿';$('today').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase()}
+function init(){
+ tick();setInterval(tick,30000);setInterval(autonomousMessage,45000);updateHome();renderChat();
+ $('memoryText').value=state.memory;$('userName').value=state.name;$('notesText').value=state.notes;
+ for(let i=1;i<=6;i++){let img=document.createElement('img');img.src=`assets/flowery-${i}.jpg`;img.style='width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px';$('galleryGrid').append(img)}
+ makeLifeEvent(false);
+ if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+init();
+</script>
+</body></html>
